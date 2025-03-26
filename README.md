@@ -1,2 +1,2 @@
-# 7.Custom-database-User-authentication-and-authorization-using-JWT
+# Custom-database-User-authentication-and-authorization-using-JWT
  JWT
