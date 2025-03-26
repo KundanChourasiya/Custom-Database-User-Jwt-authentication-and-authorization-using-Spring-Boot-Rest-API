@@ -1,5 +1,6 @@
 package com.it.config;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.it.entity.AppUser;
 import com.it.repository.AppUserRepository;
 import com.it.service.JwtService;
@@ -33,7 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
 
         if (token!=null && token.startsWith("Bearer ")){
-            String tokenVal = token.substring(7, token.length());
+            String tokenVal = token.substring(7);
             String username = jwtService.getUsername(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()){
@@ -45,6 +46,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
             }
         }
-         filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }

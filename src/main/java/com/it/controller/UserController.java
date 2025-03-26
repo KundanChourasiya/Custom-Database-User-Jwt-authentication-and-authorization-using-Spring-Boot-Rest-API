@@ -22,20 +22,20 @@ public class UserController {
     private JwtService jwtService;
 
     @Autowired
-    private AppUserRepository  appUserRepository;
+    private AppUserRepository appUserRepository;
 
 
     // url: http://localhost:8080/api/v1/user
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/user")
-    public ResponseEntity<String> userEndPoint(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader!=null && authHeader.startsWith("Bearer ")){
-            String tokenVal = authHeader.substring(7, authHeader.length());
+    public ResponseEntity<String> userEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String tokenVal = authHeader.substring(7);
             String username = jwtService.getUsername(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
-            if (byUsername.isPresent()){
+            if (byUsername.isPresent()) {
                 AppUser appUser = byUsername.get();
-                return ResponseEntity.ok("Username: " + appUser.getName() +" UserRole: "+ appUser.getRole());
+                return ResponseEntity.ok("Username: " + appUser.getName() + " UserRole: " + appUser.getRole());
             }
         }
         return ResponseEntity.badRequest().body("Invalid token!");
@@ -44,14 +44,30 @@ public class UserController {
     // url: http://localhost:8080/api/v1/admin
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
-    public ResponseEntity<String> adminEndPoint(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader!=null && authHeader.startsWith("Bearer ")){
-            String tokenVal = authHeader.substring(7, authHeader.length());
+    public ResponseEntity<String> adminEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String tokenVal = authHeader.substring(7);
             String username = jwtService.getUsername(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
-            if (byUsername.isPresent()){
+            if (byUsername.isPresent()) {
                 AppUser appUser = byUsername.get();
-                return ResponseEntity.ok("Username: " + appUser.getName() +" UserRole: "+ appUser.getRole());
+                return ResponseEntity.ok("Username: " + appUser.getName() + " UserRole: " + appUser.getRole());
+            }
+        }
+        return ResponseEntity.badRequest().body("Invalid token!");
+    }
+
+    // url: http://localhost:8080/api/v1/greet
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/greet")
+    public ResponseEntity<String> greetEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String tokenVal = authHeader.substring(7);
+            String username = jwtService.getUsername(tokenVal);
+            Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
+            if (byUsername.isPresent()) {
+                AppUser appUser = byUsername.get();
+                return ResponseEntity.ok("Welcome, Username: " + appUser.getName() + " UserRole: " + appUser.getRole());
             }
         }
         return ResponseEntity.badRequest().body("Invalid token!");

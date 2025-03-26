@@ -22,7 +22,11 @@ public class SecurityConfig {
 //                .authorizeHttpRequests(auth->auth.anyRequest().permitAll())
                 .addFilterBefore(jwtFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("api/v1/**", "api/v1/user/signup", "api/v1/auth/login", "/api/v1/admin/signup", "/**")
+                        .requestMatchers(
+                                "/api/v1/user/signup",
+                                "/api/v1/auth/login",
+                                "/api/v1/admin/signup"
+                        )
                         .permitAll()
 //                        .requestMatchers("api/v1/country").hasRole("ADMIN")
                         .anyRequest()

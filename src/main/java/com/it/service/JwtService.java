@@ -20,7 +20,7 @@ public class JwtService {
     private String issuer;
 
     @Value("${jwt.expiry.duration}")
-    private int expiryTime;
+    private int expiryTime; // time in milliseconds
 
     private Algorithm algorithm;
 
@@ -30,7 +30,7 @@ public class JwtService {
     }
 
     // generate token
-    public String generateToken(String username){
+    public String generateToken(String username) {
         return JWT.create()
                 .withClaim("name", username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expiryTime))
@@ -39,7 +39,7 @@ public class JwtService {
     }
 
     // decode jwt token and verify username
-    public String getUsername(String token){
+    public String getUsername(String token) {
         DecodedJWT decodedJWT = JWT.require(algorithm)
                 .withIssuer(issuer)
                 .build()
