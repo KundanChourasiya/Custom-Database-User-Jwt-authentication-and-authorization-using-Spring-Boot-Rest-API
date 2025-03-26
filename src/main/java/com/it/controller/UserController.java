@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping("/user")
     public ResponseEntity<String> userEndPoint(@RequestHeader("Authorization") String authHeader) {
         if (authHeader!=null && authHeader.startsWith("Bearer ")){
-            String tokenVal = authHeader.substring(8, authHeader.length() - 1);
+            String tokenVal = authHeader.substring(7, authHeader.length());
             String username = jwtService.getUsername(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()){
@@ -46,7 +46,7 @@ public class UserController {
     @GetMapping("/admin")
     public ResponseEntity<String> adminEndPoint(@RequestHeader("Authorization") String authHeader) {
         if (authHeader!=null && authHeader.startsWith("Bearer ")){
-            String tokenVal = authHeader.substring(8, authHeader.length() - 1);
+            String tokenVal = authHeader.substring(7, authHeader.length());
             String username = jwtService.getUsername(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()){

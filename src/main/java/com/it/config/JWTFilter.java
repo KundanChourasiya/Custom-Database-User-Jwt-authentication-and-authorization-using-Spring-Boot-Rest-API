@@ -33,7 +33,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
 
         if (token!=null && token.startsWith("Bearer ")){
-            String tokenVal = token.substring(8, token.length() - 1);
+            String tokenVal = token.substring(7, token.length());
             String username = jwtService.getUsername(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()){

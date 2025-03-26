@@ -25,7 +25,7 @@ public class JwtService {
     private Algorithm algorithm;
 
     @PostConstruct
-    public void postConstruct()throws UnsupportedEncodingException {
+    public void postConstruct() throws UnsupportedEncodingException {
         algorithm = Algorithm.HMAC256(algorithmKey);
     }
 
@@ -40,7 +40,10 @@ public class JwtService {
 
     // decode jwt token and verify username
     public String getUsername(String token){
-        DecodedJWT decodedJWT = JWT.require(algorithm).withIssuer(issuer).build().verify(token);
+        DecodedJWT decodedJWT = JWT.require(algorithm)
+                .withIssuer(issuer)
+                .build()
+                .verify(token);
         return decodedJWT.getClaim("name").asString();
     }
 }

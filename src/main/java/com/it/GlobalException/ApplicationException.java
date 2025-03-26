@@ -1,6 +1,5 @@
 package com.it.GlobalException;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.it.payload.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
