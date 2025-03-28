@@ -1,11 +1,15 @@
 package com.it.controller;
 
 import com.it.entity.AppUser;
+import com.it.payload.AppUserDto;
 import com.it.repository.AppUserRepository;
+import com.it.service.AppUserService;
 import com.it.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +27,9 @@ public class UserController {
 
     @Autowired
     private AppUserRepository appUserRepository;
+
+    @Autowired
+    private AppUserService service;
 
 
     // url: http://localhost:8080/api/v1/user
@@ -71,5 +78,22 @@ public class UserController {
             }
         }
         return ResponseEntity.badRequest().body("Invalid token!");
+    }
+
+    // url: http://localhost:8080/api/v1/user
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/login/user/details")
+    public ResponseEntity<?> LoginUserDetails(@AuthenticationPrincipal AppUser user) {
+        if (user!=null){
+            AppUserDto dto = new AppUserDto();
+            dto.setId(user.getId());
+            dto.setName(user.getName());
+            dto.setEmail(user.getEmail());
+            dto.setUsername(user.getUsername());
+            dto.setRole(user.getRole());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }else {
+            return ResponseEntity.badRequest().body("Invalid token!");
+        }
     }
 }

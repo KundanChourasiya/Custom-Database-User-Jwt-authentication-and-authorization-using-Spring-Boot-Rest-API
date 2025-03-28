@@ -25,7 +25,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/user/signup",
                                 "/api/v1/auth/login",
-                                "/api/v1/admin/signup"
+                                "/api/v1/admin/signup",
+                                "/login/user/details"
                         )
                         .permitAll()
 //                        .requestMatchers("api/v1/country").hasRole("ADMIN")
