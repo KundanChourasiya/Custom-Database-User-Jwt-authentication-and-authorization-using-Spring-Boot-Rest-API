@@ -57,13 +57,13 @@ user this data for checking purpose.
 >    
 > 5. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in pom.xml file.
 >    
-> 6. Create **Jwtservice** class inside the service package to implement
+> 6. Create **_Jwtservice_** class inside the service package to implement
 >      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
 >      2. Create PostContruct method to load the **_Jwt Algorithm_**
 >      3.  Create **_generateToken_** method to generate the token.
 >      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
 >    
-> 7. Create **__JwtFilter** class inside the config package.
+> 7. Create **_JwtFilter_** class inside the config package.
 >      1. extend the class with **_OncePerRequestFilter_**.
 >      2. Inject the **_handlerExceptionResolver_** dependency to handler filter level exception.
 >      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
