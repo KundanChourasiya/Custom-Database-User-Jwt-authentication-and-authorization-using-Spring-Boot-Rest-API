@@ -58,7 +58,7 @@ user this data for checking purpose.
 > 3. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in **application.properties** file.
 >    
 > 4. Create **_Jwtservice_** class inside the service package to implement
->      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
+>      1. Load **_Secret key_**, **_issuer_** and **_expiry duration_**
 >      2. Create PostContruct method to load the **_Jwt Algorithm_**
 >      3.  Create **_generateToken_** method to generate the token.
 >      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
@@ -83,7 +83,7 @@ user this data for checking purpose.
 > 8. Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
 
 
-### important Dependency to be used
+## Important Dependency to be used
 1. For rest api
 ``` 
  <dependency>
@@ -137,10 +137,10 @@ jwt.expiry.duration=86400000
 ```
 
 ## Create **_Jwtservice_** class inside the service package to implement
->      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
->      2. Create PostContruct method to load the **_Jwt Algorithm_**
->      3.  Create **_generateToken_** method to generate the token.
->      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
+>      1. Load Secret key, issuer and expiry duration.
+>      2. Create PostContruct method to load the Jwt Algorithm.
+>      3.  Create generateToken method to generate the token.
+>      4.  Create verifyToken method to validateToken and verify User Credentials.
 
 ```@Service
 public class JwtService {
@@ -200,10 +200,10 @@ public class JwtService {
 ```
 
 ## Create **_JwtFilter_** class inside the config package.
->      1. extend the class with **_OncePerRequestFilter_**.
->      2. Inject the **_handlerExceptionResolver_** dependency to handler filter level exception.
->      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
->      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
+>      1. extend the class with OncePerRequestFilter.
+>      2. Inject the handlerExceptionResolver to handler filter level exception.
+>      3. create a list Array of Permitted_path which should not filter endpoint.
+>      4. override shouldNotFilter method and doFilterInternal method.
 
 ```
 @Component
@@ -238,7 +238,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 request.getServletPath().startsWith(path)
         );
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -279,12 +278,12 @@ public class JwtFilter extends OncePerRequestFilter {
 > 		- we can authorize url base on role in 2 ways.
 > 	  
 >       	- Method level authorization.
->				1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
+>				1. Configure in Application.class @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
 > 	  			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
 > 	  
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
 
-*SecurityConfig class* 
+## *SecurityConfig class* 
 ```
 package com.it.config;
 
@@ -330,7 +329,7 @@ public class SecurityConfig {
 }
 ```
 
-*Configure EnableWebSecurity and EnableMethodSecurity* 
+## *Configure EnableWebSecurity and EnableMethodSecurity* 
 ```
 @SpringBootApplication
 @EnableWebSecurity
@@ -380,7 +379,7 @@ public class SwaggerConfig {
 
 ## Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
 
-*Swegger Defination*
+## *Swegger Defination*
 ```
 @SpringBootApplication
 @EnableWebSecurity
@@ -409,7 +408,7 @@ public class Application {
 }
 ```
 
-*All Controller  Tags,  summary and description*
+## *All Controller  Tags,  summary and description*
 ```
 @RestController
 @RequestMapping("/api/v1")
@@ -434,12 +433,12 @@ public class OpenUrlController {
 
 ### Following pictures will help to understand flow of API
 
-*Swagger*
+## *Swagger*
 
 ![image](https://github.com/user-attachments/assets/3cbb539a-fca6-4d28-a3b7-d0cf05c238eb)
 
 
-*PostMan*
+## *PostMan*
 
 url - http://localhost:8080/api/v1/auth/user/signup
 ![image](https://github.com/user-attachments/assets/82e8b7a6-ab4c-411f-aac0-8fec11184121)
