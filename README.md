@@ -55,7 +55,7 @@ user this data for checking purpose.
 >      
 > 2. Secure the Rest API by adding security dependecy and adding Jwt dependency.
 >    
-> 3. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in pom.xml file.
+> 3. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in **application.properties** file.
 >    
 > 4. Create **_Jwtservice_** class inside the service package to implement
 >      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
@@ -116,4 +116,75 @@ user this data for checking purpose.
 	<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 	<version>2.3.0</version> <!-- Latest version -->
 </dependency>
+```
+
+## Add Secret key, issuer and expiry duration in application.properties file.
+```
+# jwt configuration
+jwt.secret.key=your_secret_key
+jwt.issuer=apps-name
+jwt.expiry.duration=86400000
+```
+
+## Create Jwtservice class inside the service package to implement
+	- Secret key, issuer and expiry duration
+ 	- Create PostContruct method to load the Jwt Algorithm
+	- Create generateToken method to generate the token.
+	- Create _verifyToken_ method to validateToken and verify User Credentials.
+```
+@Service
+public class JwtService {
+
+    @Value("${jwt.secret.key}")
+    private String secretKey;
+
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    @Value("${jwt.expiry.duration}")
+    private String expiryTime; // time in milliseconds
+
+    private Algorithm algorithm;
+
+    @PostConstruct
+    public void postConstruct() throws UnsupportedEncodingException {
+        algorithm = Algorithm.HMAC256(secretKey);
+    }
+
+    // generate token
+    public String generateToken(String username) {
+        try {
+            long expiryTimeMilli = Long.parseLong(expiryTime);
+            return JWT.create()
+                    .withClaim("name", username)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + expiryTimeMilli))
+                    .withIssuer(issuer)
+                    .sign(algorithm);
+        } catch (Exception e) {
+            throw new JwtException("Error creating JWT token: " + e.getMessage());
+        }
+
+    }
+
+    // Verify Token with Exception Handling
+    public String verifyToken(String token)  {
+        try {
+            DecodedJWT decodedJWT = JWT.require(algorithm)
+                    .withIssuer(issuer)
+                    .build()
+                    .verify(token);
+            return decodedJWT.getClaim("name").asString();
+        } catch (SignatureVerificationException e) {
+            throw new JwtException("Invalid JWT signature");
+        } catch (TokenExpiredException e) {
+            throw new JwtException("JWT token has expired");
+        } catch (AlgorithmMismatchException e) {
+            throw new JwtException("JWT algorithm mismatch");
+        } catch (JWTDecodeException e) {
+            throw new JwtException("Invalid JWT token format");
+        } catch (JWTVerificationException e) {
+            throw new JwtException("JWT verification failed");
+        }
+    }
+}
 ```
