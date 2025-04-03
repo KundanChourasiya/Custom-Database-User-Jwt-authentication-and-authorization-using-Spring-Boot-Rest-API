@@ -26,16 +26,17 @@ Swagger UI Documentation - http://localhost:8888/swagger-ui/
 Before running the API server, you should update the database config inside the application.properties file.
 Update the port number, username and password as per your local database config.
     
-    ```
-    spring.datasource.url=jdbc:mysql://localhost:3306/mydb;
-    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-    spring.datasource.username=root
-    spring.datasource.password=root
-    ```
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/mydb;
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=root
+spring.datasource.password=root
+```
 
 ## API Root Endpoint
 
-```https://localhost:8888/
+```
+https://localhost:8888/
 http://localhost:8888/swagger-ui/
 user this data for checking purpose.
 ```
