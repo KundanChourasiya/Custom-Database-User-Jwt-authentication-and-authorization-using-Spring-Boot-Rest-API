@@ -73,4 +73,48 @@ user this data for checking purpose.
 > 
 > 7. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
 
+### important Dependency to be used
+1. For rest api
+``` 
+ <dependency>
+     <groupId>org.springframework.boot</groupId>
+     <artifactId>spring-boot-starter-web</artifactId>
+ </dependency>
+```
 
+2. For Getter and Setter
+``` 
+ <dependency>
+     <groupId>org.projectlombok</groupId>
+     <artifactId>lombok</artifactId>
+     <optional>true</optional>
+ </dependency>
+```
+
+3. For Security
+``` 
+ <dependency>
+     <groupId>org.springframework.boot</groupId>
+     <artifactId>spring-boot-starter-security</artifactId>
+ </dependency>
+```
+
+4. For JWT
+``` 
+ <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+```
+
+5. For Swagger
+``` 
+ <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.3.0</version> <!-- Latest version -->
+		</dependency>
+```
