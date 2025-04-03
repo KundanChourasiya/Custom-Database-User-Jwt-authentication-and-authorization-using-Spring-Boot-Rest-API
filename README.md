@@ -43,23 +43,34 @@ user this data for checking purpose.
 ```
 ## Step To Be Followed
 > 1. Create Rest Api will return to user authentication with database custom user details.
+>    
 >    **Project Documentation**
->    * Entity - AppUser (class)
->    * Payload - AppUserDto, ApiResponceDto, ErrorDto, LoginDto, TokenDto (class)
->    * Repository - AppUserRepository (interface)
->    * Service - AppUserService (interface), AppUserServiceImpl, JwtService (class)
->    * Controller - AuthUserController, UserAccessController, OpenUrlController (Class)
->    * Global Exception - GlobalException, JwtException (class)
->    * Config - SecurityConfig, JwtFilter, SwaggerConfig (Class)
-> 3. Secure the Rest API by adding security dependecy.
-> 4. Use the properties file to create custom username and password for authentication
-> 5. Create the SpringSecurityConfig class to define the bean like PasswordEncoder, UserDetailsService and AuthenticationManager
-> 6. Create JwtAuthenticationEntryPoint Class Which implements AuthenticationEntryPoint interface and override method commence
-> 7. Create JwtHelper Class which is used to perform action like validateToken and generateToken etc
-> 8. Create JWTAuthenticationFilter class which is used for the filter purpose
-> 9. Create SecurityFilterConfig class to define request processing logic
-> 10. Create JwtRequest and JwtResponse class
-> 11. Create JwtAuthenticationController to return the JwtResponse if everything works fine
+>    - **Entity** - AppUser (class)
+>    - **Payload** - AppUserDto, ApiResponceDto, ErrorDto, LoginDto, TokenDto (class)
+>    - **Repository** - AppUserRepository (interface)
+>    - **Service** - AppUserService (interface), AppUserServiceImpl, JwtService (class)
+>    - **Controller** - AuthUserController, UserAccessController, OpenUrlController (Class)
+>    - **Global Exception** - GlobalException, JwtException (class)
+>    - **Config** - SecurityConfig, JwtFilter, SwaggerConfig (Class)
+>      
+> 3. Secure the Rest API by adding security dependecy and adding Jwt dependency.
+>    
+> 5. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in pom.xml file.
+>    
+> 6. Create **Jwtservice** class inside the service package to implement
+>      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
+>      2. Create PostContruct method to load the **_Jwt Algorithm_**
+>      3.  Create **_generateToken_** method to generate the token.
+>      4.  Create **_verifyToken**_ method to verify token User Credentials.
+>    
+> 7. Create **__JwtFilter** class inside the config package.
+>      1.  
+> 9. Create JwtAuthenticationEntryPoint Class Which implements AuthenticationEntryPoint interface and override method commence
+> 10. Create JwtHelper Class which is used to perform action like validateToken and generateToken etc
+> 11. Create JWTAuthenticationFilter class which is used for the filter purpose
+> 12. Create SecurityFilterConfig class to define request processing logic
+> 13. Create JwtRequest and JwtResponse class
+> 14. Create JwtAuthenticationController to return the JwtResponse if everything works fine
 
 
 
