@@ -4,7 +4,9 @@ import com.it.entity.AppUser;
 import com.it.payload.AppUserDto;
 import com.it.repository.AppUserRepository;
 import com.it.service.AppUserService;
-import com.it.service.JwtService;
+import com.it.service.Jwt.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,9 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("api/v1")
-public class UserController {
+@RequestMapping("/api/v1")
+@Tag(name = "User/admin Access endpoint url Controller", description = "To perform user/admin details after jwt authentication and authorization")
+public class UserAccessController {
 
     @Autowired
     private JwtService jwtService;
@@ -33,12 +36,16 @@ public class UserController {
 
 
     // url: http://localhost:8080/api/v1/user
-    @PreAuthorize("hasRole('USER')")
+    @Operation(
+            summary = "Get operation for fetch the user Details",
+            description = "It is used to fetch the details if user token is valid and user has authorized for this endpoint."
+    )
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/user")
     public ResponseEntity<String> userEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String tokenVal = authHeader.substring(7);
-            String username = jwtService.getUsername(tokenVal);
+            String username = jwtService.verifyToken(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()) {
                 AppUser appUser = byUsername.get();
@@ -49,12 +56,16 @@ public class UserController {
     }
 
     // url: http://localhost:8080/api/v1/admin
-    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Get operation for fetch the Admin Details",
+            description = "It is used to fetch the details if Admin token is valid and Admin has authorized for this endpoint."
+    )
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<String> adminEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String tokenVal = authHeader.substring(7);
-            String username = jwtService.getUsername(tokenVal);
+            String username = jwtService.verifyToken(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()) {
                 AppUser appUser = byUsername.get();
@@ -65,12 +76,16 @@ public class UserController {
     }
 
     // url: http://localhost:8080/api/v1/greet
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(
+            summary = "Get operation for fetch the User/Admin both Details",
+            description = "It is used to fetch the details if User/Admin both token is valid and User/Admin has authorized for this endpoint."
+    )
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/greet")
     public ResponseEntity<String> greetEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String tokenVal = authHeader.substring(7);
-            String username = jwtService.getUsername(tokenVal);
+            String username = jwtService.verifyToken(tokenVal);
             Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
             if (byUsername.isPresent()) {
                 AppUser appUser = byUsername.get();
@@ -80,8 +95,12 @@ public class UserController {
         return ResponseEntity.badRequest().body("Invalid token!");
     }
 
-    // url: http://localhost:8080/api/v1/user
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    // url: http://localhost:8080/api/v1/login/user/details
+    @Operation(
+            summary = "Get operation for fetch the User/Admin both Details",
+            description = "It is used to fetch the details if User/Admin both token is valid and User/Admin has authorized for this endpoint."
+    )
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/login/user/details")
     public ResponseEntity<?> LoginUserDetails(@AuthenticationPrincipal AppUser user) {
         if (user!=null){

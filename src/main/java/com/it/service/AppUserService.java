@@ -1,14 +1,23 @@
 package com.it.service;
 
-import com.it.entity.AppUser;
 import com.it.payload.AppUserDto;
 import com.it.payload.LoginDto;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface AppUserService {
 
-    public AppUserDto userSignUp(AppUser user) throws IllegalAccessException;
+    // create user sign up
+    ResponseEntity<?> createUserSignup(AppUserDto dto);
 
-    public AppUserDto adminSignUp(AppUser user) throws IllegalAccessException;
+    // create admin sign up
+    ResponseEntity<?> createAdminSignup(AppUserDto dto);
 
-    String verifyUser(LoginDto dto);
+    // login user and verify user
+    ResponseEntity<?> verifyCredential(LoginDto dto);
+
+    // All users List
+    List<AppUserDto> getAllUsers();
+
 }
