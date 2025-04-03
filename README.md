@@ -131,8 +131,7 @@ jwt.expiry.duration=86400000
  	- Create PostContruct method to load the Jwt Algorithm
 	- Create generateToken method to generate the token.
 	- Create _verifyToken_ method to validateToken and verify User Credentials.
-```
-@Service
+```@Service
 public class JwtService {
 
     @Value("${jwt.secret.key}")
