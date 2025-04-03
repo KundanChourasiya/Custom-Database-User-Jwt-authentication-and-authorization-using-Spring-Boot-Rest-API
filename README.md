@@ -438,3 +438,8 @@ public class OpenUrlController {
 
 ![image](https://github.com/user-attachments/assets/3cbb539a-fca6-4d28-a3b7-d0cf05c238eb)
 
+
+*PostMan*
+url - http://localhost:8080/api/v1/auth/user/signup
+![image](https://github.com/user-attachments/assets/82e8b7a6-ab4c-411f-aac0-8fec11184121)
+
