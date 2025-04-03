@@ -53,24 +53,24 @@ user this data for checking purpose.
 >    - **Global Exception** - GlobalException, JwtException (class)
 >    - **Config** - SecurityConfig, JwtFilter, SwaggerConfig (Class)
 >      
-> 3. Secure the Rest API by adding security dependecy and adding Jwt dependency.
+> 2. Secure the Rest API by adding security dependecy and adding Jwt dependency.
 >    
-> 5. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in pom.xml file.
+> 3. Add **_Secret key_**, **_issuer_** and **_expiry duration_** in pom.xml file.
 >    
-> 6. Create **_Jwtservice_** class inside the service package to implement
+> 4. Create **_Jwtservice_** class inside the service package to implement
 >      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
 >      2. Create PostContruct method to load the **_Jwt Algorithm_**
 >      3.  Create **_generateToken_** method to generate the token.
 >      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
 >    
-> 7. Create **_JwtFilter_** class inside the config package.
+> 5. Create **_JwtFilter_** class inside the config package.
 >      1. extend the class with **_OncePerRequestFilter_**.
 >      2. Inject the **_handlerExceptionResolver_** dependency to handler filter level exception.
 >      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
 >      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
 >         
-> 8. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
+> 6. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
 > 
-> 9. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+> 7. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
 
 
