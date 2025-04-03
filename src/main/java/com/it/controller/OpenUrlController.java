@@ -24,7 +24,7 @@ public class OpenUrlController {
     // url: http://localhost:8080/api/v1/all-user-list
     @Operation(
             summary = "Get operation for fetch the User/Admin both Details",
-            description = "It is used to fetch the all user details with authentication and authorization this endpoint is open for all user."
+            description = "It is used to fetch the all user details with authentication and authorization this endpoint is open for all users."
     )
     @GetMapping("all-user-list")
     public ResponseEntity<List<AppUserDto>> getUserList(){
