@@ -65,7 +65,7 @@ user this data for checking purpose.
 >    
 > 5. Create **_JwtFilter_** class inside the config package.
 >      1. extend the class with **_OncePerRequestFilter_**.
->      2. Inject the **_handlerExceptionResolver_** dependency to handler filter level exception.
+>      2. Inject the **_handlerExceptionResolver_** to handler filter level exception.  
 >      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
 >      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
 >         
