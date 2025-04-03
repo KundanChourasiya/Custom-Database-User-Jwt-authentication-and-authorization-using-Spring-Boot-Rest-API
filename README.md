@@ -69,7 +69,7 @@ user this data for checking purpose.
 >      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
 >      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
 >         
-> 6. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
+> 6. Create **_SecurityConfig_** class inside the Config package and create Bean of **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
 > 		- we can authorize url base on role in 2 ways.
 >       	- Method level authorization.
 >				1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
@@ -271,7 +271,7 @@ public class JwtFilter extends OncePerRequestFilter {
 }
 ```
 
-##  Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
+##  Create **_SecurityConfig_** class inside the Config package and create Bean of **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
 > 		- we can authorize url base on role in 2 ways.
 >       	- Method level authorization.
 >			1. Configure in Application.class @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
