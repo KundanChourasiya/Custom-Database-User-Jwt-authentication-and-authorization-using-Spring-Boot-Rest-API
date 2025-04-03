@@ -43,7 +43,14 @@ user this data for checking purpose.
 ```
 ## Step To Be Followed
 > 1. Create Rest Api will return to user authentication with database custom user details.
->    * Entity - app_user class
+>    **Project Documentation**
+>    * Entity - AppUser (class)
+>    * Payload - AppUserDto, ApiResponceDto, ErrorDto, LoginDto, TokenDto (class)
+>    * Repository - AppUserRepository (interface)
+>    * Service - AppUserService (interface), AppUserServiceImpl, JwtService (class)
+>    * Controller - AuthUserController, UserAccessController, OpenUrlController (Class)
+>    * Global Exception - GlobalException, JwtException (class)
+>    * Config - SecurityConfig, JwtFilter, SwaggerConfig (Class)
 > 3. Secure the Rest API by adding security dependecy.
 > 4. Use the properties file to create custom username and password for authentication
 > 5. Create the SpringSecurityConfig class to define the bean like PasswordEncoder, UserDetailsService and AuthenticationManager
