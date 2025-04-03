@@ -71,7 +71,6 @@ user this data for checking purpose.
 >         
 > 6. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
 > 		- we can authorize url base on role in 2 ways.
-> 	  
 >       	- Method level authorization.
 >				1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
 > 	  			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
@@ -173,7 +172,6 @@ public class JwtService {
         } catch (Exception e) {
             throw new JwtException("Error creating JWT token: " + e.getMessage());
         }
-
     }
 
     // Verify Token with Exception Handling
@@ -278,12 +276,12 @@ public class JwtFilter extends OncePerRequestFilter {
 > 		- we can authorize url base on role in 2 ways.
 > 	  
 >       	- Method level authorization.
->				1. Configure in Application.class @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
-> 	  			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
+>			1. Configure in Application.class @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
+> 			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
 > 	  
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
 
-## *SecurityConfig class* 
+### *SecurityConfig class* 
 ```
 package com.it.config;
 
@@ -329,7 +327,7 @@ public class SecurityConfig {
 }
 ```
 
-## *Configure EnableWebSecurity and EnableMethodSecurity* 
+### *Configure EnableWebSecurity and EnableMethodSecurity* 
 ```
 @SpringBootApplication
 @EnableWebSecurity
@@ -341,7 +339,7 @@ public class Application {
 }
 ```
 
-*Method level authorization* 
+### *Method level authorization* 
 ```
 @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/user")
@@ -379,7 +377,7 @@ public class SwaggerConfig {
 
 ## Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
 
-## *Swegger Defination*
+### *Swegger Defination*
 ```
 @SpringBootApplication
 @EnableWebSecurity
@@ -408,7 +406,7 @@ public class Application {
 }
 ```
 
-## *All Controller  Tags,  summary and description*
+### *All Controller  Tags,  summary and description*
 ```
 @RestController
 @RequestMapping("/api/v1")
@@ -433,34 +431,34 @@ public class OpenUrlController {
 
 ### Following pictures will help to understand flow of API
 
-## *Swagger*
+### *Swagger*
 
 ![image](https://github.com/user-attachments/assets/3cbb539a-fca6-4d28-a3b7-d0cf05c238eb)
 
 
-## *PostMan*
+### *PostMan*
 
-url - http://localhost:8080/api/v1/auth/user/signup
+Url - http://localhost:8080/api/v1/auth/user/signup
 ![image](https://github.com/user-attachments/assets/82e8b7a6-ab4c-411f-aac0-8fec11184121)
 
-url - http://localhost:8080/api/v1/auth/admin/signup
+Url - http://localhost:8080/api/v1/auth/admin/signup
 ![image](https://github.com/user-attachments/assets/4bd4fa20-2aeb-4952-8d99-84b24331e6c6)
 
-url - http://localhost:8080/api/v1/auth/login
+Url - http://localhost:8080/api/v1/auth/login
 ![image](https://github.com/user-attachments/assets/81684301-c71e-41d3-a3f5-765f0ecc88c3)
 
-url - http://localhost:8080/api/v1/user
+Url - http://localhost:8080/api/v1/user
 ![image](https://github.com/user-attachments/assets/3b85f930-2148-4d36-911f-b9582bb4d73a)
 
-url - http://localhost:8080/api/v1/admin
+Url - http://localhost:8080/api/v1/admin
 ![image](https://github.com/user-attachments/assets/b8bec602-fd3a-4861-8421-40218d90045a)
 
-url - http://localhost:8080/api/v1/greet
+Url - http://localhost:8080/api/v1/greet
 ![image](https://github.com/user-attachments/assets/f1a0ab51-cd86-421c-abd4-0c45a4e82026)
 
-url - http://localhost:8080/api/v1/login/user/details
+Url - http://localhost:8080/api/v1/login/user/details
 ![image](https://github.com/user-attachments/assets/42548514-0286-40b0-a860-29a441f13a65)
 
-url - http://localhost:8080/api/v1/all-user-list
+Url - http://localhost:8080/api/v1/all-user-list
 ![image](https://github.com/user-attachments/assets/4fe8d495-3640-413c-8af6-ddbde3620864)
 
