@@ -8,6 +8,7 @@
 - Spring Framework
 - Spring Boot
 - Spring Data JPA
+- lombok
 - Jwt
 - Spring Security
 - MySQL
