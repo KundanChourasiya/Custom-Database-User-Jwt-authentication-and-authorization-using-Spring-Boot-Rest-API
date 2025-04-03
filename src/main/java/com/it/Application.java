@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 
-// swagger info
+// configure swagger OpenAPIDefinition
 @OpenAPIDefinition(
 		info = @Info(
 				title = "Custom-database-User-authentication-and-authorization-using-JWT-API",

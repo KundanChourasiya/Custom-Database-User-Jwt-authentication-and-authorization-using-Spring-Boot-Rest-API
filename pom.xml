@@ -55,6 +55,7 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.4.0</version>
 		</dependency>
+
 		<!-- open swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
