@@ -102,19 +102,18 @@ user this data for checking purpose.
 4. For JWT
 ``` 
  <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
-		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>4.4.0</version>
-		</dependency>
+<dependency>
+	<groupId>com.auth0</groupId>
+	<artifactId>java-jwt</artifactId>
+	<version>4.4.0</version>
+</dependency>
 ```
 
 5. For Swagger
 ``` 
- <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.3.0</version> <!-- Latest version -->
-		</dependency>
+<dependency>
+	<groupId>org.springdoc</groupId>
+	<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+	<version>2.3.0</version> <!-- Latest version -->
+</dependency>
 ```
