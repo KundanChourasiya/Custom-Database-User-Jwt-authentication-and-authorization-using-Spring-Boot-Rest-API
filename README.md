@@ -74,6 +74,3 @@ user this data for checking purpose.
 > 9. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
 
 
-
-
-# Following pictures will help to understand flow of the Application and API's of Custom database User authentication and authorization using JWT
