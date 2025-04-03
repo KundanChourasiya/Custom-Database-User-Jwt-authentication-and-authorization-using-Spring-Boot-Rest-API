@@ -273,11 +273,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
 ##  Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
 > 		- we can authorize url base on role in 2 ways.
-> 	  
 >       	- Method level authorization.
 >			1. Configure in Application.class @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
 > 			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
-> 	  
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
 
 ### *SecurityConfig class* 
