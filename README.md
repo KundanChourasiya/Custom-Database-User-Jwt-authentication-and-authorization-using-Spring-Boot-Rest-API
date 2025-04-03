@@ -5,8 +5,8 @@
 
 ## Tech Stack
 - Java
-* Spring Framework
-+ Spring Boot
+- Spring Framework
+- Spring Boot
 Spring Data JPA
 Jwt
 Spring Security
