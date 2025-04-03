@@ -70,8 +70,17 @@ user this data for checking purpose.
 >      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
 >         
 > 6. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
-> 
-> 7. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+> 	* we can authorize url in 2 ways
+>       	- Method level authorization.
+>			1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
+> 	  		2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')") like below.
+> 	  
+>       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
+>         
+> 8. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+>    
+> 9. **_Swagger Definition_**  
+
 
 ### important Dependency to be used
 1. For rest api
@@ -118,7 +127,7 @@ user this data for checking purpose.
 </dependency>
 ```
 
-## Add Secret key, issuer and expiry duration in application.properties file.
+## Add **_Secret key_**, **_issuer_** and **_expiry duration_** in **application.properties** file.
 ```
 # jwt configuration
 jwt.secret.key=your_secret_key
@@ -126,11 +135,12 @@ jwt.issuer=apps-name
 jwt.expiry.duration=86400000
 ```
 
-## Create Jwtservice class inside the service package to implement
-	- Secret key, issuer and expiry duration
- 	- Create PostContruct method to load the Jwt Algorithm
-	- Create generateToken method to generate the token.
-	- Create _verifyToken_ method to validateToken and verify User Credentials.
+## Create **_Jwtservice_** class inside the service package to implement
+>      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
+>      2. Create PostContruct method to load the **_Jwt Algorithm_**
+>      3.  Create **_generateToken_** method to generate the token.
+>      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
+
 ```@Service
 public class JwtService {
 
@@ -184,6 +194,152 @@ public class JwtService {
         } catch (JWTVerificationException e) {
             throw new JwtException("JWT verification failed");
         }
+    }
+}
+```
+
+## Create **_JwtFilter_** class inside the config package.
+>      1. extend the class with **_OncePerRequestFilter_**.
+>      2. Inject the **_handlerExceptionResolver_** dependency to handler filter level exception.
+>      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
+>      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
+
+```
+@Component
+public class JwtFilter extends OncePerRequestFilter {
+
+    // Handle Filter level exception
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver exceptionResolver;
+
+    @Autowired
+    private AppUserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+    // list for permitted endpoints (like login/register/ open any endpoints)
+    private static final List<String> PERMITTED_PATHS = List.of(
+            "/api/v1/auth",
+            "/api/v1/all-user-list",
+            "/v3/api-docs",
+            "/v2/api-docs",
+            "/swagger-ui",
+            "/swagger-resources",
+            "/webjars"
+    );
+
+    // Skip filter for permitted endpoints (like login/register/ open any endpoints)
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return PERMITTED_PATHS.stream().anyMatch(path ->
+                request.getServletPath().startsWith(path)
+        );
+    }
+
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        try {
+            String authHeader = request.getHeader("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new JwtException("Missing or invalid Bearer Token Authorization header");
+            }
+
+            String token = authHeader.substring(7);
+            String username = jwtService.verifyToken(token);
+
+            Optional<AppUser> user = userRepository.findByUsername(username);
+            if (user.isEmpty()) {
+                throw new JwtException("User not found");
+            }
+
+            AppUser appUser = user.get();
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    appUser,
+                    null,
+                    Collections.singleton(new SimpleGrantedAuthority(appUser.getRole()))
+            );
+            authentication.setDetails(new WebAuthenticationDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            filterChain.doFilter(request, response);
+        } catch (JwtException e) {
+            exceptionResolver.resolveException(request, response, null, e);
+        }
+    }
+
+}
+```
+
+##  Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
+> 	* we can authorize url in 2 ways
+>       	- Method level authorization.
+>			1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
+> 	  		2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')") like below.
+> 	  
+>       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
+
+```
+package com.it.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
+//                .authorizeHttpRequests(auth-> auth.anyRequest().permitAll())
+
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/v3/api-docs/**",
+                                "/v2/api-docs",
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",    // Required for Swagger UI assets
+                                "/api/v1/all-user-list"
+                        )
+                        .permitAll()
+//                        .requestMatchers("/hms/api/v1/greet").hasAuthority("USER")   // hasAuthority() instead of hasRole() spring 3
+                        .anyRequest()
+                        .authenticated())
+                .addFilterBefore(jwtFilter, AuthorizationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
+}
+```
+
+## Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+
+```
+@Configuration
+public class SwaggerConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().addList("Jwt Api Access key"))
+                .components(new Components().addSecuritySchemes("Jwt Api Access key", new SecurityScheme()
+                        .name("Jwt Api Access key").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+
     }
 }
 ```
