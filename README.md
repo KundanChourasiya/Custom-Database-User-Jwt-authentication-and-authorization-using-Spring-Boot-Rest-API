@@ -70,16 +70,17 @@ user this data for checking purpose.
 >      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
 >         
 > 6. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
-> 	* we can authorize url in 2 ways
+> 		- we can authorize url base on role in 2 ways.
+> 	  
 >       	- Method level authorization.
->			1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
-> 	  		2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')") like below.
+>				1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
+> 	  			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
 > 	  
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
 >         
-> 8. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+> 7. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
 >    
-> 9. **_Swagger Definition_**  
+> 8. Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
 
 
 ### important Dependency to be used
@@ -275,13 +276,15 @@ public class JwtFilter extends OncePerRequestFilter {
 ```
 
 ##  Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
-> 	* we can authorize url in 2 ways
+> 		- we can authorize url base on role in 2 ways.
+> 	  
 >       	- Method level authorization.
->			1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
-> 	  		2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')") like below.
+>				1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
+> 	  			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
 > 	  
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
 
+*SecurityConfig class* 
 ```
 package com.it.config;
 
@@ -327,6 +330,37 @@ public class SecurityConfig {
 }
 ```
 
+*Configure EnableWebSecurity and EnableMethodSecurity* 
+```
+@SpringBootApplication
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+public class Application {
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+}
+```
+
+*Method level authorization* 
+```
+@PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/user")
+    public ResponseEntity<String> userEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String tokenVal = authHeader.substring(7);
+            String username = jwtService.verifyToken(tokenVal);
+            Optional<AppUser> byUsername = appUserRepository.findByUsername(username);
+            if (byUsername.isPresent()) {
+                AppUser appUser = byUsername.get();
+                return ResponseEntity.ok("Username: " + appUser.getName() + " UserRole: " + appUser.getRole());
+            }
+        }
+        return ResponseEntity.badRequest().body("Invalid token!");
+    }
+```
+
+
 ## Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
 
 ```
@@ -343,3 +377,64 @@ public class SwaggerConfig {
     }
 }
 ```
+
+## Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
+
+*Swegger Defination*
+```
+@SpringBootApplication
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+
+// configure swagger OpenAPIDefinition
+@OpenAPIDefinition(
+		info = @Info(
+				title = "Custom-database-User-authentication-and-authorization-using-JWT-API",
+				version = "1.0",
+				description = "In this Api we used Spring security, Validation and Jwt implementation for authentication and authorization and we solved all types of exception in running test cases.",
+				contact = @Contact(
+						name = "Kundan Kumar Chourasiya",
+						email = "mailmekundanchourasiya@gmail.com"
+				)
+		),
+		servers = @Server(
+				url = "http://localhost:8080",
+				description = "Custom-database-User-authentication-and-authorization-using-JWT-url"
+		)
+)
+public class Application {
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+}
+```
+
+*All Controller  Tags,  summary and description*
+```
+@RestController
+@RequestMapping("/api/v1")
+@Tag(name = "Open endpoint url Controller", description = "To perform fetch all user/admin details without authentication and authorization")
+public class OpenUrlController {
+
+    @Autowired
+    private AppUserService service;
+
+    // url: http://localhost:8080/api/v1/all-user-list
+    @Operation(
+            summary = "Get operation for fetch the User/Admin both Details",
+            description = "It is used to fetch the all user details with authentication and authorization this endpoint is open for all user."
+    )
+    @GetMapping("all-user-list")
+    public ResponseEntity<List<AppUserDto>> getUserList(){
+        List<AppUserDto> allUsers = service.getAllUsers();
+        return new ResponseEntity<>(allUsers, HttpStatus.FOUND);
+    }
+}
+```
+
+### Following pictures will help to understand flow of API
+
+*Swagger*
+
+![image](https://github.com/user-attachments/assets/3cbb539a-fca6-4d28-a3b7-d0cf05c238eb)
+
