@@ -74,7 +74,6 @@ user this data for checking purpose.
 >       	- Method level authorization.
 >				1. Configure in *Application.class* @EnableWebSecurity and @EnableMethodSecurity(prePostEnabled = true)
 > 	  			2. add Annotation in Controller methoed with @PreAuthorize("hasAuthority('ROLE_USER')")) like below.
-> 	  
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("USER"))
 >         
 > 7. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
