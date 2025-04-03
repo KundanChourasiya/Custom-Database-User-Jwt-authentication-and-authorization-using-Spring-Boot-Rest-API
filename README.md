@@ -61,16 +61,18 @@ user this data for checking purpose.
 >      1. **_Secret key_**, **_issuer_** and **_expiry duration_**
 >      2. Create PostContruct method to load the **_Jwt Algorithm_**
 >      3.  Create **_generateToken_** method to generate the token.
->      4.  Create **_verifyToken**_ method to verify token User Credentials.
+>      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
 >    
 > 7. Create **__JwtFilter** class inside the config package.
->      1.  
-> 9. Create JwtAuthenticationEntryPoint Class Which implements AuthenticationEntryPoint interface and override method commence
-> 10. Create JwtHelper Class which is used to perform action like validateToken and generateToken etc
-> 11. Create JWTAuthenticationFilter class which is used for the filter purpose
-> 12. Create SecurityFilterConfig class to define request processing logic
-> 13. Create JwtRequest and JwtResponse class
-> 14. Create JwtAuthenticationController to return the JwtResponse if everything works fine
+>      1. extend the class with **_OncePerRequestFilter_**.
+>      2. Inject the **_handlerExceptionResolver_** dependency to handler filter level exception.
+>      3. create a list Array of **_Permitted_path_** which should not filter endpoint.
+>      4. override **_shouldNotFilter_** method and **_doFilterInternal_** method.
+>         
+> 8. Create **_SecurityConfig_** class inside the Config package and create Bean **_SecurityFilterChain_** method to Authorize endpoint url with based on user role.
+> 
+> 9. Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+
 
 
 
