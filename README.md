@@ -314,7 +314,7 @@ public class SecurityConfig {
                                 "/api/v1/all-user-list"
                         )
                         .permitAll()
-//                        .requestMatchers("/hms/api/v1/greet").hasAuthority("USER")   // hasAuthority() instead of hasRole() spring 3
+//                        .requestMatchers("/hms/api/v1/greet").hasAuthority('ROLE_USER')   // hasAuthority() instead of hasRole() spring 3
                         .anyRequest()
                         .authenticated())
                 .addFilterBefore(jwtFilter, AuthorizationFilter.class)
