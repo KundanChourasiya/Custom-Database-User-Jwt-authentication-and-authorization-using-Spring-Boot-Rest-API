@@ -38,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtService jwtService;
 
 
-
     // list for permitted endpoints (like login/register/ open any endpoints)
     private static final List<String> PERMITTED_PATHS = List.of(
             "/api/v1/auth",
@@ -49,7 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
             "/swagger-resources",
             "/webjars"
     );
-
 
 
     // Skip filter for permitted endpoints (like login/register/ open any endpoints)

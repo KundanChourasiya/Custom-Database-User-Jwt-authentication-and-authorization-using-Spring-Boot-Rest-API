@@ -66,5 +66,4 @@ public class JwtService {
             throw new JwtException("JWT verification failed");
         }
     }
-
 }

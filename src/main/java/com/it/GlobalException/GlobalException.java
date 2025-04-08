@@ -66,5 +66,4 @@ public class GlobalException {
         ApiResponseDto<Object> response = new ApiResponseDto<>(false, "Something went wrong", errorMsg);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
-
 }
