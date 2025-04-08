@@ -349,79 +349,6 @@ public class Application {
         return ResponseEntity.badRequest().body("Invalid token!");
     }
 ```
-
-
-## Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
-
-```
-@Configuration
-public class SwaggerConfig {
-
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .addSecurityItem(new SecurityRequirement().addList("Jwt Api Access key"))
-                .components(new Components().addSecuritySchemes("Jwt Api Access key", new SecurityScheme()
-                        .name("Jwt Api Access key").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
-
-    }
-}
-```
-
-## Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
-
-### *Swegger Defination*
-```
-@SpringBootApplication
-@EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
-
-// configure swagger OpenAPIDefinition
-@OpenAPIDefinition(
-		info = @Info(
-				title = "Custom-database-User-authentication-and-authorization-using-JWT-API",
-				version = "1.0",
-				description = "In this Api we used Spring security, Validation and Jwt implementation for authentication and authorization and we solved all types of exception in running test cases.",
-				contact = @Contact(
-						name = "Kundan Kumar Chourasiya",
-						email = "mailmekundanchourasiya@gmail.com"
-				)
-		),
-		servers = @Server(
-				url = "http://localhost:8080",
-				description = "Custom-database-User-authentication-and-authorization-using-JWT-url"
-		)
-)
-public class Application {
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
-}
-```
-
-### *All Controller  Tags,  summary and description*
-```
-@RestController
-@RequestMapping("/api/v1")
-@Tag(name = "Open endpoint url Controller", description = "To perform fetch all user/admin details without authentication and authorization")
-public class OpenUrlController {
-
-    @Autowired
-    private AppUserService service;
-
-    // url: http://localhost:8080/api/v1/all-user-list
-    @Operation(
-            summary = "Get operation for fetch the User/Admin both Details",
-            description = "It is used to fetch the all user details with authentication and authorization this endpoint is open for all user."
-    )
-    @GetMapping("all-user-list")
-    public ResponseEntity<List<AppUserDto>> getUserList(){
-        List<AppUserDto> allUsers = service.getAllUsers();
-        return new ResponseEntity<>(allUsers, HttpStatus.FOUND);
-    }
-}
-```
-
 ## Create **GlobalException** class and Custom Exception class to handle the Api Exception.
 ### *GlobalException*
 ```
@@ -499,6 +426,79 @@ public class InvalidCredentialsException extends RuntimeException {
     }
 }
 ```
+
+## Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
+
+```
+@Configuration
+public class SwaggerConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().addList("Jwt Api Access key"))
+                .components(new Components().addSecuritySchemes("Jwt Api Access key", new SecurityScheme()
+                        .name("Jwt Api Access key").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+
+    }
+}
+```
+
+## Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
+
+### *Swegger Defination*
+```
+@SpringBootApplication
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+
+// configure swagger OpenAPIDefinition
+@OpenAPIDefinition(
+		info = @Info(
+				title = "Custom-database-User-authentication-and-authorization-using-JWT-API",
+				version = "1.0",
+				description = "In this Api we used Spring security, Validation and Jwt implementation for authentication and authorization and we solved all types of exception in running test cases.",
+				contact = @Contact(
+						name = "Kundan Kumar Chourasiya",
+						email = "mailmekundanchourasiya@gmail.com"
+				)
+		),
+		servers = @Server(
+				url = "http://localhost:8080",
+				description = "Custom-database-User-authentication-and-authorization-using-JWT-url"
+		)
+)
+public class Application {
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+}
+```
+
+### *All Controller  Tags,  summary and description*
+```
+@RestController
+@RequestMapping("/api/v1")
+@Tag(name = "Open endpoint url Controller", description = "To perform fetch all user/admin details without authentication and authorization")
+public class OpenUrlController {
+
+    @Autowired
+    private AppUserService service;
+
+    // url: http://localhost:8080/api/v1/all-user-list
+    @Operation(
+            summary = "Get operation for fetch the User/Admin both Details",
+            description = "It is used to fetch the all user details with authentication and authorization this endpoint is open for all users."
+    )
+    @GetMapping("all-user-list")
+    public ResponseEntity<ApiResponseDto<List<AppUserDto>>> getUserList(){
+        List<AppUserDto> allUsers = service.getAllUsers();
+        ApiResponseDto<List<AppUserDto>> allUsersDetails = new ApiResponseDto<>(true, "All Users details", allUsers);
+        return ResponseEntity.status(HttpStatusCode.valueOf(HttpStatus.FOUND.value())).body(allUsersDetails);
+    }
+}
+```
+
 
 ### Following pictures will help to understand flow of API
 
