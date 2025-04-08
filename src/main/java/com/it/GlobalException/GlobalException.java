@@ -1,6 +1,6 @@
 package com.it.GlobalException;
 
-import com.it.payload.ErrorDto;
+import com.it.payload.ApiResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,46 +17,54 @@ public class GlobalException {
 
     // GlobalException Handler
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDto> globalExceptionHandler(Exception e, WebRequest request) {
-        ErrorDto errorDto = new ErrorDto(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.name(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponseDto<Object>> GlobalExceptionHandler(Exception ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     //NoResourceFoundException Handler
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorDto> NoResourceFoundExceptionHandler(NoResourceFoundException e, WebRequest request) {
-        ErrorDto errorDto = new ErrorDto(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.name(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponseDto<Object>> NoResourceFoundExceptionHandler(NoResourceFoundException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     // IllegalArgumentException Handler
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorDto> IllegalArgumentExceptionHandler(IllegalArgumentException e, WebRequest request){
-        ErrorDto errorDto = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponseDto<Object>> IllegalArgumentExceptionHandler(IllegalArgumentException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // InvalidCredentialsException Handler
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponseDto<Object>> UserNotFoundExceptionHandler(InvalidCredentialsException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     // RuntimeException Handler
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorDto> RuntimeExceptionHandler(RuntimeException e, WebRequest request){
-        ErrorDto errorDto = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponseDto<Object>> RuntimeExceptionHandler(RuntimeException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     // JwtException Handler
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ErrorDto> JwtExceptionHandler(JwtException e, WebRequest request){
-        ErrorDto errorDto = new ErrorDto(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.name(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDto, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiResponseDto<Object>> JwtExceptionHandler(JwtException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     // MethodArgumentNotValidExceptionHandler Handler
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
-        Map<String, String> errorMap = new HashMap<>();
-        e.getBindingResult().getFieldErrors().forEach(error->errorMap.put(error.getField(), error.getDefaultMessage()));
-        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponseDto<Object>> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
+        Map<String, String> errorMsg = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errorMsg.put(error.getField(), error.getDefaultMessage()));
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, "Something went wrong", errorMsg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
-
 
 }

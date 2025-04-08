@@ -1,16 +1,13 @@
 package com.it.service.Impl;
 
+import com.it.GlobalException.InvalidCredentialsException;
 import com.it.entity.AppUser;
-import com.it.payload.ApiResponseDto;
 import com.it.payload.AppUserDto;
 import com.it.payload.LoginDto;
-import com.it.payload.TokenDto;
 import com.it.repository.AppUserRepository;
 import com.it.service.AppUserService;
 import com.it.service.Jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +23,11 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Autowired
     private JwtService jwtService;
+
+    public AppUserServiceImpl(AppUserRepository userRepository, JwtService jwtService) {
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
+    }
 
 
     // Map AppUser to dto
@@ -55,17 +57,17 @@ public class AppUserServiceImpl implements AppUserService {
 
     // create user sign up
     @Override
-    public ResponseEntity<?> createUserSignup(AppUserDto dto) throws IllegalArgumentException {
+    public AppUserDto createUserSignup(AppUserDto dto) throws IllegalArgumentException {
         // Convert DTO to entity
         AppUser user = mapToAppUser(dto);
 
         // Check if email or username already exists
         if (userRepository.existsByEmail(user.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "User email already exists."));
+            throw new IllegalArgumentException("User email already exist.");
         }
 
         if (userRepository.existsByUsername(user.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "Username already exists."));
+            throw new IllegalArgumentException("User Username already exist.");
         }
 
         // Set  decryptPassword and save the user
@@ -80,23 +82,23 @@ public class AppUserServiceImpl implements AppUserService {
         AppUserDto savedUserDto = mapToDto(savedUser);
 
         // Return saved user details in JSON format
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUserDto);
+        return savedUserDto;
     }
 
 
-    // create admin sign up
+    //    // create admin sign up
     @Override
-    public ResponseEntity<?> createAdminSignup(AppUserDto dto) {
+    public AppUserDto createAdminSignup(AppUserDto dto) {
         // Convert DTO to entity
         AppUser user = mapToAppUser(dto);
 
         // Check if email or username already exists
         if (userRepository.existsByEmail(user.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "User email already exists."));
+            throw new IllegalArgumentException("User email already exist.");
         }
 
         if (userRepository.existsByUsername(user.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "Username already exists."));
+            throw new IllegalArgumentException("User Username already exist.");
         }
 
         // Set  decryptPassword and save the user
@@ -111,28 +113,23 @@ public class AppUserServiceImpl implements AppUserService {
         AppUserDto savedUserDto = mapToDto(savedUser);
 
         // Return saved user details in JSON format
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUserDto);
+        return savedUserDto;
     }
 
-    // login user, verify user and generate token
+    //    // login user, verify user and generate token
     @Override
-    public ResponseEntity<?> verifyCredential(LoginDto dto) {
+    public String verifyCredential(LoginDto dto) {
         final Optional<AppUser> user = userRepository.findByUsername(dto.getUsername());
-        if (user.isPresent()) {
-            AppUser appUser = user.get();
-            if (BCrypt.checkpw(dto.getPassword(), appUser.getPassword())) {
-
-                // generate token
-                String token = jwtService.generateToken(appUser.getUsername());
-                TokenDto tokenDto = new TokenDto(token, "Jwt");
-
-                return ResponseEntity.status(HttpStatus.OK.value()).body(tokenDto);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(new ApiResponseDto(HttpStatus.UNAUTHORIZED.value(), "Enter valid password"));
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(new ApiResponseDto(HttpStatus.NOT_FOUND.value(), "Enter valid email"));
+        if (user.isEmpty()) {
+            throw new InvalidCredentialsException("Invalid email or user not found");
         }
+        AppUser appUser = user.get();
+        if (!BCrypt.checkpw(dto.getPassword(), appUser.getPassword())) {
+            throw new InvalidCredentialsException("Invalid password");
+        }
+        // generate token
+        String token = jwtService.generateToken(appUser.getUsername());
+        return token;
     }
 
     // All users List

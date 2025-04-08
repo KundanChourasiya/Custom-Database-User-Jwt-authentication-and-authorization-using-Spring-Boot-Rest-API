@@ -5,16 +5,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApiResponseDto {
+public class ApiResponseDto<T> {
 
-    private int status;
+    private Boolean status;
     private String message;
+    private T data;
 
-    public ApiResponseDto() {
-    }
-
-    public ApiResponseDto(int status, String message) {
+    public ApiResponseDto(Boolean status, String message, T data) {
         this.status = status;
         this.message = message;
+        this.data = data;
+    }
+
+    public ApiResponseDto() {
     }
 }

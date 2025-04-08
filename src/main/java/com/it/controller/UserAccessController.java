@@ -34,6 +34,12 @@ public class UserAccessController {
     @Autowired
     private AppUserService service;
 
+    public UserAccessController(JwtService jwtService, AppUserRepository appUserRepository, AppUserService service) {
+        this.jwtService = jwtService;
+        this.appUserRepository = appUserRepository;
+        this.service = service;
+    }
+
 
     // url: http://localhost:8080/api/v1/user
     @Operation(
@@ -42,7 +48,7 @@ public class UserAccessController {
     )
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/user")
-    public ResponseEntity<String> userEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<?> userEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String tokenVal = authHeader.substring(7);
             String username = jwtService.verifyToken(tokenVal);
@@ -62,7 +68,7 @@ public class UserAccessController {
     )
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/admin")
-    public ResponseEntity<String> adminEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<?> adminEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String tokenVal = authHeader.substring(7);
             String username = jwtService.verifyToken(tokenVal);
@@ -82,7 +88,7 @@ public class UserAccessController {
     )
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/greet")
-    public ResponseEntity<String> greetEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<?> greetEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String tokenVal = authHeader.substring(7);
             String username = jwtService.verifyToken(tokenVal);
