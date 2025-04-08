@@ -504,32 +504,32 @@ public class OpenUrlController {
 
 ### *Swagger*
 
-![image](https://github.com/user-attachments/assets/3cbb539a-fca6-4d28-a3b7-d0cf05c238eb)
+![image](https://github.com/user-attachments/assets/3d69d74c-867d-4531-a62b-f071b7f1fe64)
 
-
-### *PostMan*
+### *PostMan test cases*
 
 Url - http://localhost:8080/api/v1/auth/user/signup
-![image](https://github.com/user-attachments/assets/82e8b7a6-ab4c-411f-aac0-8fec11184121)
+![image](https://github.com/user-attachments/assets/aaf517d9-405f-4d80-bf5e-ba05e2307fd8)
 
 Url - http://localhost:8080/api/v1/auth/admin/signup
-![image](https://github.com/user-attachments/assets/4bd4fa20-2aeb-4952-8d99-84b24331e6c6)
+![image](https://github.com/user-attachments/assets/1e8dc232-30c4-4997-9a00-5ca6d15c9632)
 
 Url - http://localhost:8080/api/v1/auth/login
-![image](https://github.com/user-attachments/assets/81684301-c71e-41d3-a3f5-765f0ecc88c3)
+![image](https://github.com/user-attachments/assets/cd6b1b42-93c9-4ab9-bd36-83b4b505ba7d)
 
 Url - http://localhost:8080/api/v1/user
-![image](https://github.com/user-attachments/assets/3b85f930-2148-4d36-911f-b9582bb4d73a)
+![image](https://github.com/user-attachments/assets/5d290fbd-7f9d-4b57-8257-9188589d1487)
 
 Url - http://localhost:8080/api/v1/admin
-![image](https://github.com/user-attachments/assets/b8bec602-fd3a-4861-8421-40218d90045a)
+![image](https://github.com/user-attachments/assets/55f1beff-d72f-41cb-8319-1099cab7db38)
 
 Url - http://localhost:8080/api/v1/greet
-![image](https://github.com/user-attachments/assets/f1a0ab51-cd86-421c-abd4-0c45a4e82026)
+![image](https://github.com/user-attachments/assets/4ec74cd8-e8fc-47e8-8002-7febbd208413)
 
 Url - http://localhost:8080/api/v1/login/user/details
-![image](https://github.com/user-attachments/assets/42548514-0286-40b0-a860-29a441f13a65)
+![image](https://github.com/user-attachments/assets/d3f286aa-9441-4ddd-84d9-727a47512f9f)
 
 Url - http://localhost:8080/api/v1/all-user-list
-![image](https://github.com/user-attachments/assets/4fe8d495-3640-413c-8af6-ddbde3620864)
+![image](https://github.com/user-attachments/assets/03347d0b-62bb-49c2-b6ff-315e573b5761)
+
 
