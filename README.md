@@ -13,6 +13,7 @@
 - Spring Security
 - MySQL
 - Postman
+- Validation
 - Swagger UI
 
 ## Modules
@@ -46,7 +47,7 @@ user this data for checking purpose.
 >    
 >    **Project Documentation**
 >    - **Entity** - AppUser (class)
->    - **Payload** - AppUserDto, ApiResponceDto, ErrorDto, LoginDto, TokenDto (class)
+>    - **Payload** - AppUserDto, ApiResponceDto, LoginDto, TokenDto (class)
 >    - **Repository** - AppUserRepository (interface)
 >    - **Service** - AppUserService (interface), AppUserServiceImpl, JwtService (class)
 >    - **Controller** - AuthUserController, UserAccessController, OpenUrlController (Class)
@@ -140,7 +141,8 @@ jwt.expiry.duration=86400000
 >      3.  Create generateToken method to generate the token.
 >      4.  Create verifyToken method to validateToken and verify User Credentials.
 
-```@Service
+```
+@Service
 public class JwtService {
 
     @Value("${jwt.secret.key}")
@@ -171,6 +173,7 @@ public class JwtService {
         } catch (Exception e) {
             throw new JwtException("Error creating JWT token: " + e.getMessage());
         }
+
     }
 
     // Verify Token with Exception Handling
@@ -267,7 +270,6 @@ public class JwtFilter extends OncePerRequestFilter {
             exceptionResolver.resolveException(request, response, null, e);
         }
     }
-
 }
 ```
 
@@ -280,21 +282,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
 ### *SecurityConfig class* 
 ```
-package com.it.config;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
-
 @Configuration
 public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -314,7 +310,7 @@ public class SecurityConfig {
                                 "/api/v1/all-user-list"
                         )
                         .permitAll()
-//                        .requestMatchers("/hms/api/v1/greet").hasAuthority('ROLE_USER')   // hasAuthority() instead of hasRole() spring 3
+//                        .requestMatchers("/hms/api/v1/greet").hasAuthority("ROLE_USER")   // hasAuthority() instead of hasRole() spring 3
                         .anyRequest()
                         .authenticated())
                 .addFilterBefore(jwtFilter, AuthorizationFilter.class)
@@ -422,6 +418,84 @@ public class OpenUrlController {
     public ResponseEntity<List<AppUserDto>> getUserList(){
         List<AppUserDto> allUsers = service.getAllUsers();
         return new ResponseEntity<>(allUsers, HttpStatus.FOUND);
+    }
+}
+```
+
+## Create **GlobalException** class and Custom Exception class to handle the Api Exception.
+### *GlobalException*
+```
+@RestControllerAdvice
+public class GlobalException {
+
+    // GlobalException Handler
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponseDto<Object>> GlobalExceptionHandler(Exception ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    //NoResourceFoundException Handler
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponseDto<Object>> NoResourceFoundExceptionHandler(NoResourceFoundException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    // IllegalArgumentException Handler
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponseDto<Object>> IllegalArgumentExceptionHandler(IllegalArgumentException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // InvalidCredentialsException Handler
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponseDto<Object>> UserNotFoundExceptionHandler(InvalidCredentialsException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    // RuntimeException Handler
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponseDto<Object>> RuntimeExceptionHandler(RuntimeException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // JwtException Handler
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponseDto<Object>> JwtExceptionHandler(JwtException ex, WebRequest request) {
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    // MethodArgumentNotValidExceptionHandler Handler
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponseDto<Object>> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
+        Map<String, String> errorMsg = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errorMsg.put(error.getField(), error.getDefaultMessage()));
+        ApiResponseDto<Object> response = new ApiResponseDto<>(false, "Something went wrong", errorMsg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+}
+```
+
+### *JwtException*
+```
+public class JwtException extends RuntimeException{
+    public JwtException(String message) {
+        super(message);
+    }
+}
+```
+
+### *InvalidCredentialsException*
+```
+public class InvalidCredentialsException extends RuntimeException {
+    public InvalidCredentialsException(String message) {
+        super(message);
     }
 }
 ```
