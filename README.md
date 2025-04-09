@@ -1,4 +1,4 @@
-# Custom-database-User-authentication-and-authorization-using-JWT-API. 
+# Custom-Database-User-Jwt-authentication-and-authorization-using-Spring-Boot-Rest-API. 
 
 > [!NOTE]
 > ### In this Api we used Spring Security, Validation and Jwt implementation for authentication and authorization and we solved all types of exception in running test cases.
