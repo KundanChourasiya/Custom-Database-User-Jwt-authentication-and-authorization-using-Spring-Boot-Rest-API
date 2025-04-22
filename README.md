@@ -4,9 +4,8 @@
 > ### In this Api we used Spring Security, Validation and Jwt implementation for authentication and authorization and we solved all types of exception in running test cases.
 
 ## Tech Stack
-- Java
-- Spring Framework
-- Spring Boot
+- Java-17
+- Spring Boot-3
 - Spring Data JPA
 - lombok
 - Jwt
@@ -28,7 +27,7 @@ Swagger UI Documentation - http://localhost:8080/swagger-ui/
 Before running the API server, you should update the database config inside the application.properties file.
 Update the port number, username and password as per your local database config.
     
-```
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/mydb;
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.datasource.username=root
@@ -61,8 +60,8 @@ user this data for checking purpose.
 > 4. Create **_Jwtservice_** class inside the service package to implement
 >      1. Load **_Secret key_**, **_issuer_** and **_expiry duration_**
 >      2. Create PostContruct method to load the **_Jwt Algorithm_**
->      3.  Create **_generateToken_** method to generate the token.
->      4.  Create **_verifyToken**_ method to validateToken and verify User Credentials.
+>      3. Create **_generateToken_** method to generate the token.
+>      4. Create **_verifyToken**_ method to validateToken and verify User Credentials.
 >    
 > 5. Create **_JwtFilter_** class inside the config package.
 >      1. extend the class with **_OncePerRequestFilter_**.
@@ -84,7 +83,7 @@ user this data for checking purpose.
 
 ## Important Dependency to be used
 1. For rest api
-``` 
+```xml 
  <dependency>
      <groupId>org.springframework.boot</groupId>
      <artifactId>spring-boot-starter-web</artifactId>
@@ -92,7 +91,7 @@ user this data for checking purpose.
 ```
 
 2. For Getter and Setter
-``` 
+```xml 
  <dependency>
      <groupId>org.projectlombok</groupId>
      <artifactId>lombok</artifactId>
@@ -101,7 +100,7 @@ user this data for checking purpose.
 ```
 
 3. For Security
-``` 
+```xml  
  <dependency>
      <groupId>org.springframework.boot</groupId>
      <artifactId>spring-boot-starter-security</artifactId>
@@ -109,7 +108,7 @@ user this data for checking purpose.
 ```
 
 4. For JWT
-``` 
+```xml 
  <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
 <dependency>
 	<groupId>com.auth0</groupId>
@@ -119,7 +118,7 @@ user this data for checking purpose.
 ```
 
 5. For Swagger
-``` 
+```xml  
 <dependency>
 	<groupId>org.springdoc</groupId>
 	<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -128,7 +127,7 @@ user this data for checking purpose.
 ```
 
 ## Add **_Secret key_**, **_issuer_** and **_expiry duration_** in **application.properties** file.
-```
+```properties
 # jwt configuration
 jwt.secret.key=your_secret_key
 jwt.issuer=apps-name
@@ -141,7 +140,7 @@ jwt.expiry.duration=86400000
 >      3.  Create generateToken method to generate the token.
 >      4.  Create verifyToken method to validateToken and verify User Credentials.
 
-```
+```java
 @Service
 public class JwtService {
 
@@ -205,7 +204,7 @@ public class JwtService {
 >      3. create a list Array of Permitted_path which should not filter endpoint.
 >      4. override shouldNotFilter method and doFilterInternal method.
 
-```
+```java
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -281,7 +280,7 @@ public class JwtFilter extends OncePerRequestFilter {
 >       	- requestMatcher method like (.requestMatchers("/hms/api/v1/greet").hasAuthority("ROLE_USER"))
 
 ### *SecurityConfig class* 
-```
+```java
 @Configuration
 public class SecurityConfig {
 
@@ -321,7 +320,7 @@ public class SecurityConfig {
 ```
 
 ### *Configure EnableWebSecurity and EnableMethodSecurity* 
-```
+```java
 @SpringBootApplication
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -333,7 +332,7 @@ public class Application {
 ```
 
 ### *Method level authorization* 
-```
+```java
 @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/user")
     public ResponseEntity<String> userEndPoint(@RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -351,7 +350,7 @@ public class Application {
 ```
 ## Create **GlobalException** class and Custom Exception class to handle the Api Exception.
 ### *GlobalException*
-```
+```java
 @RestControllerAdvice
 public class GlobalException {
 
@@ -410,7 +409,7 @@ public class GlobalException {
 ```
 
 ### *JwtException*
-```
+```java
 public class JwtException extends RuntimeException{
     public JwtException(String message) {
         super(message);
@@ -419,7 +418,7 @@ public class JwtException extends RuntimeException{
 ```
 
 ### *InvalidCredentialsException*
-```
+```java
 public class InvalidCredentialsException extends RuntimeException {
     public InvalidCredentialsException(String message) {
         super(message);
@@ -429,7 +428,7 @@ public class InvalidCredentialsException extends RuntimeException {
 
 ## Create **_SwaggerConfig_** class to integrate OpenApi Components for authorize user access token.
 
-```
+```java
 @Configuration
 public class SwaggerConfig {
 
@@ -447,7 +446,7 @@ public class SwaggerConfig {
 ## Configure **_Swagger Definition_** to use Api Documentation and all Controller Documentation.
 
 ### *Swegger Defination*
-```
+```java
 @SpringBootApplication
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -476,7 +475,7 @@ public class Application {
 ```
 
 ### *All Controller  Tags,  summary and description*
-```
+```java
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Open endpoint url Controller", description = "To perform fetch all user/admin details without authentication and authorization")
